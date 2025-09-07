@@ -1,0 +1,236 @@
+{
+	"info": {
+		"_postman_id": "84c2da10-4ce1-4c64-bd41-2ccb55f3036f",
+		"name": "FakeStore API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "48227249",
+		"_collection_link": "https://willinietor-2294863.postman.co/workspace/William's-Workspace~d2a8ecf3-295a-44e0-822a-836b79431d0a/collection/48227249-84c2da10-4ce1-4c64-bd41-2ccb55f3036f?action=share&source=collection_link&creator=48227249"
+	},
+	"item": [
+		{
+			"name": "Consulta categoria Electronics",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Status 200\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Content-Type JSON\r",
+							"pm.test(\"Content-Type is application/json\", () => {\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"// Body is array and not empty\r",
+							"pm.test(\"Body is an array and not empty\", function () {\r",
+							"    var json = pm.response.json();\r",
+							"    pm.expect(Array.isArray(json)).to.be.true;\r",
+							"    pm.expect(json.length).to.be.above(0);\r",
+							"});\r",
+							"\r",
+							"// Every item has category 'electronics'\r",
+							"pm.test(\"All items have category 'electronics'\", function () {\r",
+							"    var json = pm.response.json();\r",
+							"    _.each(json, function(item) {\r",
+							"        pm.expect(item.category).to.eql(\"electronics\");\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"// Save first id for later requests\r",
+							"var json = pm.response.json();\r",
+							"pm.environment.set(\"firstElectronicsId\", json[0].id);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://fakestoreapi.com/products/category/electronics",
+					"protocol": "https",
+					"host": [
+						"fakestoreapi",
+						"com"
+					],
+					"path": [
+						"products",
+						"category",
+						"electronics"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Consulta Producto",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 200\", function () {\r",
+							"    pm.expect(pm.response.code).to.equal(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response has the required fields\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(responseData).to.be.an('object');\r",
+							"    pm.expect(responseData).to.have.all.keys('id', 'title', 'price', 'description', 'category', 'image', 'rating');\r",
+							"    \r",
+							"    pm.expect(responseData.rating).to.be.an('object').that.has.all.keys('rate', 'count');\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Validate the structure of the rating object - rate and count\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(responseData).to.be.an('object');\r",
+							"    pm.expect(responseData.rating).to.be.an('object').that.includes.keys('rate', 'count');\r",
+							"\r",
+							"    pm.expect(responseData.rating.rate).to.be.a('number');\r",
+							"    pm.expect(responseData.rating.count).to.be.a('number');\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Price is a non-negative number\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(responseData).to.be.an('object');\r",
+							"    pm.expect(responseData.price).to.be.a('number').and.to.be.at.least(0, \"Price should be a non-negative number\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://fakestoreapi.com/products/1",
+					"protocol": "https",
+					"host": [
+						"fakestoreapi",
+						"com"
+					],
+					"path": [
+						"products",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Creacion producto",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Código de respuesta es 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"El producto fue creado y tiene id\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property(\"id\");\r",
+							"    pm.expect(jsonData).to.have.property(\"title\", \"Postman QA\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": 8761,\r\n  \"title\": \"Postman QA\",\r\n  \"price\": 7256.21,\r\n  \"description\": \"Producto creado prueba postman\",\r\n  \"category\": \"electronics\",\r\n  \"image\" : \"https://www.tooltyp.com/wp-content/uploads/2014/10/1900x920-8-beneficios-de-usar-imagenes-en-nuestros-sitios-web.jpg\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://fakestoreapi.com/products",
+					"protocol": "https",
+					"host": [
+						"fakestoreapi",
+						"com"
+					],
+					"path": [
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Actualizar imagen",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Código de respuesta es 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"La imagen fue actualizada\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property(\"image\", \"https://economiasustentable.com/wp-content/uploads/2025/07/Sol-1000x562.jpg\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"image\": \"https://economiasustentable.com/wp-content/uploads/2025/07/Sol-1000x562.jpg\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://fakestoreapi.com/products/21",
+					"protocol": "https",
+					"host": [
+						"fakestoreapi",
+						"com"
+					],
+					"path": [
+						"products",
+						"21"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
